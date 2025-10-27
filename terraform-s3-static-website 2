@@ -25,7 +25,7 @@ locals {
   bucket_name = "jayla-static-site-${random_id.suffix.hex}"
 }
 
-# 1️⃣ Create the S3 bucket
+# 1️ Create the S3 bucket
 resource "aws_s3_bucket" "site" {
   bucket = local.bucket_name
   tags = {
@@ -34,7 +34,7 @@ resource "aws_s3_bucket" "site" {
   }
 }
 
-# 2️⃣ Allow public website access
+# 2️ Allow public website access
 resource "aws_s3_bucket_public_access_block" "allow_public" {
   bucket                  = aws_s3_bucket.site.id
   block_public_acls       = false
@@ -43,7 +43,7 @@ resource "aws_s3_bucket_public_access_block" "allow_public" {
   restrict_public_buckets = false
 }
 
-# 3️⃣ Bucket policy to make files publicly readable
+# 3️Bucket policy to make files publicly readable
 resource "aws_s3_bucket_policy" "public_read" {
   bucket = aws_s3_bucket.site.id
   policy = jsonencode({
@@ -59,7 +59,7 @@ resource "aws_s3_bucket_policy" "public_read" {
   depends_on = [aws_s3_bucket_public_access_block.allow_public]
 }
 
-# 4️⃣ Configure S3 website (index + error pages)
+# 4️ Configure S3 website (index + error pages)
 resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.site.id
   index_document {
@@ -70,7 +70,7 @@ resource "aws_s3_bucket_website_configuration" "website" {
   }
 }
 
-# 5️⃣ Upload simple website files
+# 5️ Upload simple website files
 resource "aws_s3_object" "index" {
   bucket       = aws_s3_bucket.site.id
   key          = "index.html"
@@ -80,7 +80,7 @@ resource "aws_s3_object" "index" {
 <html>
   <head><meta charset="utf-8"><title>Jayla's AWS Website</title></head>
   <body style="font-family:sans-serif;max-width:720px;margin:40px auto;text-align:center;">
-    <h1>🚀 Hello from S3 Static Website!</h1>
+    <h1> Hello from S3 Static Website!</h1>
     <p>Deployed using <strong>Terraform</strong> on Jayla’s new AWS account 🌩️</p>
   </body>
 </html>
@@ -96,14 +96,14 @@ resource "aws_s3_object" "error" {
 <html>
   <head><meta charset="utf-8"><title>404 - Not Found</title></head>
   <body style="font-family:sans-serif;max-width:720px;margin:40px auto;text-align:center;">
-    <h1>🙈 Page Not Found</h1>
+    <h1> Page Not Found</h1>
     <p>Oops! Try going back to the homepage.</p>
   </body>
 </html>
 HTML
 }
 
-# 6️⃣ Outputs
+# 6️ Outputs
 output "bucket_name" {
   value = aws_s3_bucket.site.bucket
 }
